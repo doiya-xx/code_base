@@ -163,6 +163,34 @@ public class BinaryTree {
     }
     
     /**
+     * 二叉树的深度优先遍历
+     */
+    public static void printDepthFirstTraversal(TreeNode root) {
+        System.out.println(getDepthFirstTraversal(root));
+    }
+    
+    /**
+     * 二叉树的前序遍历
+     */
+    public static void printPreorderTraversal(TreeNode root) {
+        System.out.println(getPreorderTraversalByRecursion(root));
+    }
+    
+    /**
+     * 二叉树的中序遍历
+     */
+    public static void printInorderTraversal(TreeNode root) {
+        System.out.println(getInorderTraversalByRecursion(root));
+    }
+    
+    /**
+     * 二叉树的后序遍历
+     */
+    public static void printPostorderTraversal(TreeNode root) {
+        System.out.println(getPostorderTraversalByRecursion(root));
+    }
+    
+    /**
      * 二叉树的广度优先遍历
      *
      * @param root 二叉树的根节点
@@ -231,13 +259,6 @@ public class BinaryTree {
     
     /**
      * 二叉树的深度优先遍历
-     */
-    public static void printDepthFirstTraversal(TreeNode root) {
-        System.out.println(getDepthFirstTraversal(root));
-    }
-    
-    /**
-     * 二叉树的深度优先遍历
      *
      * @param root 二叉树的根节点
      * @return {@code List<Integer>}
@@ -281,6 +302,203 @@ public class BinaryTree {
     }
     
     /**
+     * 基于递归，二叉树的前序遍历
+     *
+     * @param root 二叉树的根节点
+     * @return {@code List<Integer>}
+     */
+    public static List<Integer> getPreorderTraversalByRecursion(TreeNode root) {
+        if (root == null) {
+            return new ArrayList<>();
+        }
+        List<Integer> list = new ArrayList<>();
+        list.add(root.val);
+        list.addAll(getPreorderTraversalByRecursion(root.left));
+        list.addAll(getPreorderTraversalByRecursion(root.right));
+        return list;
+    }
+    
+    /**
+     * 基于栈的迭代，二叉树的前序遍历
+     *
+     * @param root 二叉树的根节点
+     * @return {@code List<Integer>}
+     */
+    public static List<Integer> getPreorderTraversalByStack(TreeNode root) {
+        if (root == null) {
+            return new ArrayList<>();
+        }
+        List<Integer> list = new ArrayList<>();
+        Stack<TreeNode> stack = new Stack<>();
+        stack.push(root);
+        while (!stack.isEmpty()) {
+            TreeNode node = stack.pop();
+            list.add(node.val);
+            if (node.right != null) {
+                stack.push(node.right);
+            }
+            if (node.left != null) {
+                stack.push(node.left);
+            }
+        }
+        return list;
+    }
+    
+    /**
+     * 基于Mirrors，二叉树的前序遍历
+     *
+     * @param root 二叉树的根节点
+     * @return {@code List<Integer>}
+     */
+    public static List<Integer> getPreorderTraversalByMirrors(TreeNode root) {
+        if (root == null) {
+            return new ArrayList<>();
+        }
+        List<Integer> list = new ArrayList<>();
+        Stack<TreeNode> stack = new Stack<>();
+        TreeNode node = root;
+        while (node != null || !stack.isEmpty()) {
+            while (node != null) {
+                list.add(node.val);
+                stack.push(node);
+                node = node.left;
+            }
+            node = stack.pop();
+            node = node.right;
+        }
+        return list;
+    }
+    
+    /**
+     * 基于递归，二叉树的中序遍历
+     *
+     * @param root 二叉树的根节点
+     * @return {@code List<Integer>}
+     */
+    public static List<Integer> getInorderTraversalByRecursion(TreeNode root) {
+        if (root == null) {
+            return new ArrayList<>();
+        }
+        List<Integer> list = new ArrayList<>();
+        list.addAll(getInorderTraversalByRecursion(root.left));
+        list.add(root.val);
+        list.addAll(getInorderTraversalByRecursion(root.right));
+        return list;
+    }
+    
+    /**
+     * 基于栈的迭代，二叉树的中序遍历
+     *
+     * @param root 二叉树的根节点
+     * @return {@code List<Integer>}
+     */
+    public static List<Integer> getInorderTraversalByStack(TreeNode root) {
+        if (root == null) {
+            return new ArrayList<>();
+        }
+        List<Integer> list = new ArrayList<>();
+        Stack<TreeNode> stack = new Stack<>();
+        TreeNode node = root;
+        while (node != null || !stack.isEmpty()) {
+            while (node != null) {
+                stack.push(node);
+                node = node.left;
+            }
+            node = stack.pop();
+            list.add(node.val);
+            node = node.right;
+        }
+        return list;
+    }
+    
+    /**
+     * 基于Mirrors，二叉树的中序遍历
+     *
+     * @param root 二叉树的根节点
+     * @return {@code List<Integer>}
+     */
+    public static List<Integer> getInorderTraversalByMirrors(TreeNode root) {
+        // 检查根节点是否为空，如果为空，则返回一个空的 ArrayList
+        if (root == null) {
+            return new ArrayList<>();
+        }
+        
+        // 初始化一个空的 ArrayList 用于存储遍历的结果
+        List<Integer> list = new ArrayList<>();
+        
+        // 初始化两个 TreeNode 变量，cur 和 pre。cur 初始设置为树的根节点
+        TreeNode cur = root;
+        TreeNode pre;
+        
+        // 进入一个 while 循环，只要 cur 不为空就继续
+        while (cur != null) {
+            // 检查 cur 的左子节点是否为空
+            if (cur.left == null) {
+                // 如果为空，将 cur 的值添加到 list 中，并将 cur 移动到其右子节点
+                list.add(cur.val);
+                cur = cur.right;
+            } else {
+                // 如果 cur 的左子节点不为空，将 pre 设置为 cur 的左子节点，并进入另一个 while 循环
+                pre = cur.left;
+                while (pre.right != null) {
+                    // 只要 pre 的右子节点不为空，就将 pre 移动到其右子节点
+                    pre = pre.right;
+                }
+                // 在内部 while 循环之后，将 pre 的右子节点设置为 cur，将 cur 移动到其左子节点，并将原始 cur 的左子节点设置为 null
+                pre.right = cur;
+                TreeNode temp = cur;
+                cur = cur.left;
+                temp.left = null;
+            }
+        }
+        // 在外部 while 循环之后，返回 list，它现在包含了二叉树的中序遍历
+        return list;
+    }
+    
+    /**
+     * 基于递归，二叉树的后序遍历
+     *
+     * @param root 二叉树的根节点
+     * @return {@code List<Integer>}
+     */
+    public static List<Integer> getPostorderTraversalByRecursion(TreeNode root) {
+        if (root == null) {
+            return new ArrayList<>();
+        }
+        List<Integer> list = new ArrayList<>();
+        list.addAll(getPostorderTraversalByRecursion(root.left));
+        list.addAll(getPostorderTraversalByRecursion(root.right));
+        list.add(root.val);
+        return list;
+    }
+    
+    /**
+     * 基于栈的迭代，二叉树的后序遍历
+     *
+     * @param root 二叉树的根节点
+     * @return {@code List<Integer>}
+     */
+    public static List<Integer> getPostorderTraversalByStack(TreeNode root) {
+        if (root == null) {
+            return new ArrayList<>();
+        }
+        List<Integer> list = new ArrayList<>();
+        Stack<TreeNode> stack = new Stack<>();
+        stack.push(root);
+        while (!stack.isEmpty()) {
+            TreeNode node = stack.pop();
+            list.add(0, node.val);
+            if (node.left != null) {
+                stack.push(node.left);
+            }
+            if (node.right != null) {
+                stack.push(node.right);
+            }
+        }
+        return list;
+    }
+    
+    /**
      * 计算二叉树的深度
      */
     public static int getDepth(TreeNode root) {
@@ -291,8 +509,4 @@ public class BinaryTree {
         int rightDepth = getDepth(root.right);
         return Math.max(leftDepth, rightDepth) + 1;
     }
-    
-    /**
-     *
-     */
 }
